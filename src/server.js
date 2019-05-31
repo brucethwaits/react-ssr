@@ -9,6 +9,7 @@ import Helmet from "react-helmet";
 import routes from "./routes";
 import Layout from "./components/Layout";
 import createStore, { initializeSession } from "./store";
+import Handlebars from 'handlebars';
 
 const app = express();
 
@@ -47,23 +48,83 @@ app.get( "/*", ( req, res ) => {
 app.listen( 2048 );
 
 function htmlTemplate( reactDom, reduxState, helmetData ) {
-    return `
+
+    var source = `
         <!DOCTYPE html>
         <html>
         <head>
             <meta charset="utf-8">
-            ${ helmetData.title.toString( ) }
-            ${ helmetData.meta.toString( ) }
-            <title>React SSR</title>
+            {{#helmetData}}
+                {{&title}}
+                {{&meta}}
+            {{/helmetData}}
         </head>
         
         <body>
-            <div id="app">${ reactDom }</div>
+            <div id="app">{{&reactDom}}</div>
             <script>
-                window.REDUX_DATA = ${ JSON.stringify( reduxState ) }
+                window.REDUX_DATA = {{&reduxState}}
             </script>
             <script src="./app.bundle.js"></script>
         </body>
         </html>
     `;
+
+    var template = Handlebars.compile(source);
+
+    var data = {
+        "helmetData" : {
+            title: helmetData.title.toString(),
+            meta: helmetData.meta.toString()
+        },
+        "reactDom" :reactDom,
+        "reduxState": JSON.stringify( reduxState )
+    };
+
+    var result = template(data);
+
+    // var result2 = `
+    //     <!DOCTYPE html>
+    //     <html>
+    //     <head>
+    //         <meta charset="utf-8">
+    //         ${ helmetData.title.toString( ) }
+    //         ${ helmetData.meta.toString( ) }
+    //     </head>
+        
+    //     <body>
+    //         <div id="app">${ reactDom }</div>
+    //         <script>
+    //             window.REDUX_DATA = ${ JSON.stringify( reduxState ) }
+    //         </script>
+    //         <script src="./app.bundle.js"></script>
+    //     </body>
+    //     </html>
+    // `;
+
+    //console.log('result', result);
+    //console.log('result2', result2);
+
+    return result;
+    //return result2;
+
+    // return `
+    //     <!DOCTYPE html>
+    //     <html>
+    //     <head>
+    //         <meta charset="utf-8">
+    //         ${ helmetData.title.toString( ) }
+    //         ${ helmetData.meta.toString( ) }
+    //         <title>React SSR</title>
+    //     </head>
+        
+    //     <body>
+    //         <div id="app">${ reactDom }</div>
+    //         <script>
+    //             window.REDUX_DATA = ${ JSON.stringify( reduxState ) }
+    //         </script>
+    //         <script src="./app.bundle.js"></script>
+    //     </body>
+    //     </html>
+    // `;
 }

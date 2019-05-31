@@ -9,10 +9,10 @@
     "server": "nodemon index.js",
     "client": "webpack --watch --progress",
     "linter": "eslint src",
-    "bundlesize": "bundlesize",
-    "precommit": "eslint src --quiet"
+    "bundlesize": "bundlesize"
   },
   "dependencies": {
+    "handlebars": "^4.1.2",
     "isomorphic-fetch": "^2.2.1",
     "react": "^16.0.0",
     "react-dom": "^16.0.0",
