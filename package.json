@@ -5,6 +5,7 @@
   "main": "webpack.config.js",
   "scripts": {
     "build": "NODE_ENV=production webpack --progress",
+    "buildwin": "NODE_ENV=production & webpack --progress",
     "dev": "npm-run-all --parallel server client",
     "server": "nodemon index.js",
     "client": "webpack --watch --progress",
