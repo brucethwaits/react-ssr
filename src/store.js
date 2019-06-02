@@ -11,8 +11,8 @@ const storeData = ( data ) => ( {
     data,
 } );
 
-export const fetchData = ( ) => ( dispatch ) =>
-    fetchCircuits( ).then( res => dispatch( storeData( res ) ) );
+export const fetchData = (params) => ( dispatch ) =>
+    fetchCircuits(params).then( res => dispatch( storeData( res ) ) );
 
 const sessionReducer = ( state = false, action ) => {
     switch ( action.type ) {

@@ -15,6 +15,13 @@ if ( !dev ) {
     } ) );
 }
 
+// plugins.push( new BundleAnalyzerPlugin( {
+//     analyzerMode: "static",
+//     reportFilename: "webpack-report.html",
+//     openAnalyzer: true,
+// } ) );
+
+
 module.exports = {
     mode: dev ? "development" : "production",
     context: path.join( __dirname, "src" ),

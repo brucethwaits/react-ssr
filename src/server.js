@@ -21,14 +21,56 @@ app.get( "/*", ( req, res ) => {
 
     store.dispatch( initializeSession( ) );
 
+    let all_dispatched = [];
+
+    routes.forEach(function(route, route_index) {
+        //console.log('route', route);
+        //console.log('route_index', route_index);
+
+        var match = matchPath( req.url, route );
+        if (match)
+        {
+            console.log('match', match);
+            const component = route.component;
+            //console.log('component', component);
+            const serverFetch = component.serverFetch;
+            console.log('serverFetch', serverFetch);
+
+            const dispatched = store.dispatch( serverFetch(match.params) )
+            console.log('dispatched', dispatched);
+            all_dispatched.push(dispatched);
+        }
+    });
+
+    //const match = routes.find(function(route) { return matchPath( req.url, route )});
+
+    //const match_data = matchPath( req.url, match );
+    
+    //console.log('match', match);
+    //console.log('match_data', match_data);
+
+    //const filtered_routes = routes.filter( route => matchPath( req.url, route ) );
+    //console.log('filtered_routes', filtered_routes);
+    //const components = filtered_routes.map( route => route.component );
+    //console.log('components',components);
+    //const fetches = components.filter( comp => comp.serverFetch );
+    //console.log('fetches',fetches);
+    //const dispatched = fetches.map( comp => store.dispatch( comp.serverFetch ) )
+    //const dispatched = fetches.map( comp => store.dispatch( comp.serverFetch() ) )
+    //const dispatched = fetches.map( comp => comp.serverFetch( ) )
+    //console.log('dispatched',dispatched);
+/*
     const dataRequirements =
         routes
             .filter( route => matchPath( req.url, route ) ) // filter matching paths
             .map( route => route.component ) // map to components
             .filter( comp => comp.serverFetch ) // check if components have data requirement
             .map( comp => store.dispatch( comp.serverFetch( ) ) ); // dispatch data requirement
+*/
 
-    Promise.all( dataRequirements ).then( ( ) => {
+    //Promise.all( dispatched ).then( ( ) => {
+    Promise.all( all_dispatched ).then( ( ) => {
+        //console.log('store', store.getState( ));
         const jsx = (
             <ReduxProvider store={ store }>
                 <StaticRouter context={ context } location={ req.url }>
@@ -65,7 +107,7 @@ function htmlTemplate( reactDom, reduxState, helmetData ) {
             <script>
                 window.REDUX_DATA = {{&reduxState}}
             </script>
-            <script src="./app.bundle.js"></script>
+            <script src="/app.bundle.js"></script>
         </body>
         </html>
     `;
