@@ -21,6 +21,26 @@ app.get( "/*", ( req, res ) => {
 
     store.dispatch( initializeSession( ) );
 
+    var dispatched = routes.filter(route => matchPath( req.url, route ))
+        .map(route => { return {
+            'match': matchPath( req.url, route ),
+            'component': route.component
+        } })
+        .filter(mapping => mapping.component.serverFetch)
+        .map(m => store.dispatch(m.component.serverFetch(m.match.params)))
+
+    //console.log('test', test);
+
+/*
+    const dataRequirements =
+        routes
+            .filter( route => matchPath( req.url, route ) ) // filter matching paths
+            .map( route => route.component ) // map to components
+            .filter( comp => comp.serverFetch ) // check if components have data requirement
+            .map( comp => store.dispatch( comp.serverFetch( ) ) ); // dispatch data requirement
+*/
+
+/*
     let all_dispatched = [];
 
     routes.forEach(function(route, route_index) {
@@ -41,35 +61,9 @@ app.get( "/*", ( req, res ) => {
             all_dispatched.push(dispatched);
         }
     });
-
-    //const match = routes.find(function(route) { return matchPath( req.url, route )});
-
-    //const match_data = matchPath( req.url, match );
-    
-    //console.log('match', match);
-    //console.log('match_data', match_data);
-
-    //const filtered_routes = routes.filter( route => matchPath( req.url, route ) );
-    //console.log('filtered_routes', filtered_routes);
-    //const components = filtered_routes.map( route => route.component );
-    //console.log('components',components);
-    //const fetches = components.filter( comp => comp.serverFetch );
-    //console.log('fetches',fetches);
-    //const dispatched = fetches.map( comp => store.dispatch( comp.serverFetch ) )
-    //const dispatched = fetches.map( comp => store.dispatch( comp.serverFetch() ) )
-    //const dispatched = fetches.map( comp => comp.serverFetch( ) )
-    //console.log('dispatched',dispatched);
-/*
-    const dataRequirements =
-        routes
-            .filter( route => matchPath( req.url, route ) ) // filter matching paths
-            .map( route => route.component ) // map to components
-            .filter( comp => comp.serverFetch ) // check if components have data requirement
-            .map( comp => store.dispatch( comp.serverFetch( ) ) ); // dispatch data requirement
 */
 
-    //Promise.all( dispatched ).then( ( ) => {
-    Promise.all( all_dispatched ).then( ( ) => {
+    Promise.all( dispatched ).then( ( ) => {
         //console.log('store', store.getState( ));
         const jsx = (
             <ReduxProvider store={ store }>
