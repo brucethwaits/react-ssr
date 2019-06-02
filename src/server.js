@@ -20,7 +20,7 @@ app.get( "/*", ( req, res ) => {
     const store = createStore( );
 
     store.dispatch( initializeSession( ) );
-
+/*
     var dispatched = routes.filter(route => matchPath( req.url, route ))
         .map(route => { return {
             'match': matchPath( req.url, route ),
@@ -28,8 +28,7 @@ app.get( "/*", ( req, res ) => {
         } })
         .filter(mapping => mapping.component.serverFetch)
         .map(m => store.dispatch(m.component.serverFetch(m.match.params)))
-
-    //console.log('test', test);
+*/
 
 /*
     const dataRequirements =
@@ -40,31 +39,20 @@ app.get( "/*", ( req, res ) => {
             .map( comp => store.dispatch( comp.serverFetch( ) ) ); // dispatch data requirement
 */
 
-/*
     let all_dispatched = [];
 
-    routes.forEach(function(route, route_index) {
-        //console.log('route', route);
-        //console.log('route_index', route_index);
-
+    routes.forEach((route) => {
         var match = matchPath( req.url, route );
-        if (match)
-        {
-            console.log('match', match);
-            const component = route.component;
-            //console.log('component', component);
-            const serverFetch = component.serverFetch;
-            console.log('serverFetch', serverFetch);
-
-            const dispatched = store.dispatch( serverFetch(match.params) )
-            console.log('dispatched', dispatched);
-            all_dispatched.push(dispatched);
+        if (match) {
+            const serverFetch = route.component.serverFetch;
+            if (serverFetch) {
+                const dispatched = store.dispatch(serverFetch(match.params));
+                all_dispatched.push(dispatched);
+            }
         }
     });
-*/
 
-    Promise.all( dispatched ).then( ( ) => {
-        //console.log('store', store.getState( ));
+    Promise.all( all_dispatched ).then( ( ) => {
         const jsx = (
             <ReduxProvider store={ store }>
                 <StaticRouter context={ context } location={ req.url }>
